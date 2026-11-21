@@ -3,4 +3,4 @@
  * il signe uniquement les sessions locales de démonstration.
  */
 export const DEMO_AUTH_SECRET =
-  process.env.NEXTAUTH_SECRET ?? 'sehhati-demo-only-secret-change-me';
+  process.env.NEXTAUTH_SECRET ?? 'Sahty-demo-only-secret-change-me';

@@ -21,7 +21,7 @@ export default function AuthLayout({
       {children}
 
       <p className="relative mt-5 text-[11px] font-medium text-ink-400">
-        صحتي · Sehhati — Tous droits réservés
+        صحتي · Sahty — Tous droits réservés
       </p>
     </div>
   );

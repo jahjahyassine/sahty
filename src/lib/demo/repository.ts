@@ -723,7 +723,7 @@ export function redeemPatientQr(doctorId: string, raw: string): RedeemPatientRes
   let scope: AccessScope = 'FULL';
   let durationMin = 60 * 24;
   const value = raw.trim();
-  if (/^sehhati:\/\/patient\//i.test(value) || /^https?:\/\//i.test(value)) {
+  if (/^Sahty:\/\/patient\//i.test(value) || /^https?:\/\//i.test(value)) {
     try {
       const url = new URL(value);
       const scopeParam = url.searchParams.get('scope');

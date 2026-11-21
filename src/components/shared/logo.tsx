@@ -58,7 +58,7 @@ export function Logo({
               light ? 'text-white/70' : 'text-ink-400',
             )}
           >
-            Sehhati
+            Sahty
           </span>
         </span>
       )}

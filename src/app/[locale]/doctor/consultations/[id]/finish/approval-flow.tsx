@@ -380,7 +380,7 @@ export function ApprovalFlow({
               <div>
                 <p className="font-arabic text-base font-bold leading-none text-primary-700">صحتي</p>
                 <p className="mt-0.5 text-[9px] font-semibold uppercase tracking-[0.18em] text-ink-400">
-                  Sehhati
+                  Sahty
                 </p>
               </div>
             </div>

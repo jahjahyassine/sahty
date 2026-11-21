@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'صحتي — Sehhati',
+    name: 'صحتي — Sahty',
     short_name: 'صحتي',
     description: 'Votre santé, dans votre poche.',
     start_url: '/ar/login',

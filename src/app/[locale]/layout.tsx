@@ -23,11 +23,11 @@ const arabic = IBM_Plex_Sans_Arabic({
 
 export const metadata: Metadata = {
   title: {
-    default: 'صحتي — Sehhati',
+    default: 'صحتي — Sahty',
     template: '%s · صحتي',
   },
   description: 'صحتي — Votre santé, dans votre poche. Conservez et partagez vos consultations médicales en toute sécurité.',
-  applicationName: 'Sehhati',
+  applicationName: 'Sahty',
   manifest: '/manifest.webmanifest',
   icons: {
     icon: [

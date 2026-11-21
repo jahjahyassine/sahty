@@ -1,8 +1,8 @@
 {
-  "name": "sehhati",
+  "name": "Sahty",
   "version": "1.0.0",
   "private": true,
-  "description": "صحتي — Sehhati. Votre santé, dans votre poche.",
+  "description": "صحتي — Sahty. Votre santé, dans votre poche.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

@@ -1,7 +1,7 @@
 {
   "brand": {
     "name": "صحتي",
-    "latin": "Sehhati",
+    "latin": "Sahty",
     "tagline": "Votre santé, dans votre poche",
     "taglineFr": "Votre santé, dans votre poche"
   },
@@ -116,7 +116,7 @@
     "ACCESS_GRANT": "Accès autorisé"
   },
   "auth": {
-    "welcome": "Bienvenue sur Sehhati",
+    "welcome": "Bienvenue sur Sahty",
     "loginTitle": "Connexion",
     "loginSubtitle": "Accédez à votre dossier de santé en toute sécurité",
     "email": "Adresse e-mail",
@@ -893,11 +893,11 @@
   },
   "dev": {
     "title": "Design system",
-    "subtitle": "Tous les composants de Sehhati sur une seule page."
+    "subtitle": "Tous les composants de Sahty sur une seule page."
   },
   "about": {
-    "title": "À propos de Sehhati",
-    "body": "Sehhati est une application pour conserver et partager ses consultations médicales en toute sécurité.",
+    "title": "À propos de Sahty",
+    "body": "Sahty est une application pour conserver et partager ses consultations médicales en toute sécurité.",
     "privacyTitle": "Protection des données personnelles",
     "privacyBody": "Les données de santé sont sensibles. Avant tout usage réel, vérifiez la conformité de l’application avec la loi 09-08 et les orientations de la CNDP."
   }

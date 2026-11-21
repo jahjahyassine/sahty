@@ -141,7 +141,7 @@ export function PatientConsultationDetailView({
         {/* En-tête impression */}
         <div className="mb-4 hidden items-center justify-between border-b border-line pb-4 print:flex">
           <div>
-            <p className="font-arabic text-xl font-bold text-primary-700">صحتي · Sehhati</p>
+            <p className="font-arabic text-xl font-bold text-primary-700">صحتي · Sahty</p>
             <p className="text-[10px] text-ink-400">{t('printTitle')}</p>
           </div>
           <div className="text-end text-[10px] text-ink-500">

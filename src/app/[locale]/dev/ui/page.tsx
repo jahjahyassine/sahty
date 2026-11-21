@@ -159,7 +159,7 @@ export default function DesignSystemPage() {
 
         <Block title="QR" className="lg:col-span-6">
           <div className="rounded-3xl bg-primary-600 p-5">
-            <QRDisplay value="sehhati://claim?c=K7M29QXP" code="K7M2-9QXP" size={160} />
+            <QRDisplay value="Sahty://claim?c=K7M29QXP" code="K7M2-9QXP" size={160} />
           </div>
         </Block>
 

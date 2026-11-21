@@ -1,4 +1,4 @@
-#صحتي · Sehhati
+#صحتي · Sahty
 
 Démonstration web bilingue **arabe (RTL) / français (LTR)** du parcours « consultation → dossier patient ». Cette version fonctionne **sans base de données** : les données vivent dans le navigateur.
 
@@ -82,9 +82,9 @@ La page de connexion propose un remplissage en un clic pour chaque compte. **Auc
 
 ## Persistance et réinitialisation
 
-- Les données de démonstration sont stockées dans le **localStorage du navigateur** sous la clé `sehhati.demo.v1` (avec repli en mémoire si le stockage est indisponible).
+- Les données de démonstration sont stockées dans le **localStorage du navigateur** sous la clé `Sahty.demo.v1` (avec repli en mémoire si le stockage est indisponible).
 - Aucun serveur ne conserve vos modifications : deux navigateurs ont deux états indépendants.
-- Pour repartir des données initiales, utilisez **« Réinitialiser la démo »** dans le menu utilisateur, ou supprimez la clé `sehhati.demo.v1` depuis les outils de développement.
+- Pour repartir des données initiales, utilisez **« Réinitialiser la démo »** dans le menu utilisateur, ou supprimez la clé `Sahty.demo.v1` depuis les outils de développement.
 - **L’audio n’est pas persisté** : il reste en mémoire pendant la session et disparaît au rechargement. Seuls la transcription et le rapport sont enregistrés.
 
 ---

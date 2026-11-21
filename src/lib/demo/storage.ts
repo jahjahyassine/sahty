@@ -9,7 +9,7 @@ import type { DemoDatabase } from './types';
  * données le temps de la session. Aucun composant ne doit lire `localStorage`
  * directement : tout passe par `demoRepository`.
  */
-export const DEMO_STORAGE_KEY = 'sehhati.demo.v1';
+export const DEMO_STORAGE_KEY = 'Sahty.demo.v1';
 
 let memoryValue: string | null = null;
 

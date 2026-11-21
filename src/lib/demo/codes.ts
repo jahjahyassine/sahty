@@ -41,12 +41,12 @@ export function normalizeDemoCode(input: string) {
 
 /** Payload QR déterministe d’un patient de démonstration. */
 export function patientQrPayload(patientCode: string) {
-  return `sehhati://patient/${patientCode}`;
+  return `Sahty://patient/${patientCode}`;
 }
 
 /** Payload QR d’un code de remise de démonstration. */
 export function claimQrPayload(code: string) {
-  return `sehhati://claim?c=${code.replace(/-/g, '')}`;
+  return `Sahty://claim?c=${code.replace(/-/g, '')}`;
 }
 
 /**
@@ -58,7 +58,7 @@ export function normalizePatientCode(input: string): string | null {
   let value = input.trim();
   if (!value) return null;
 
-  if (/^sehhati:\/\/patient\//i.test(value) || /^https?:\/\//i.test(value)) {
+  if (/^Sahty:\/\/patient\//i.test(value) || /^https?:\/\//i.test(value)) {
     try {
       const url = new URL(value);
       const segments = url.pathname.split('/').filter(Boolean);
@@ -75,13 +75,13 @@ export function normalizePatientCode(input: string): string | null {
   return null;
 }
 
-/** Extrait un code de remise depuis un QR `sehhati://claim?c=…` ou une saisie libre. */
+/** Extrait un code de remise depuis un QR `Sahty://claim?c=…` ou une saisie libre. */
 export function extractClaimCode(raw: string): string | null {
   if (!raw) return null;
   let value = raw.trim();
   if (!value) return null;
 
-  if (/^(sehhati:|https?:)/i.test(value)) {
+  if (/^(Sahty:|https?:)/i.test(value)) {
     try {
       const url = new URL(value);
       value =

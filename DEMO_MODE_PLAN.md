@@ -1,4 +1,4 @@
-# Sehhati — Passage en mode démo sans base de données
+# Sahty — Passage en mode démo sans base de données
 
 ## 1. Cartographie des dépendances Prisma / PostgreSQL
 
@@ -76,10 +76,10 @@ src/lib/recording/
 ```
 
 - **Source de vérité unique** : `demoRepository`. Aucun composant ne touche `localStorage`.
-- **Persistance** : clé `sehhati.demo.v1`, rechargée au refresh, réinitialisable.
+- **Persistance** : clé `Sahty.demo.v1`, rechargée au refresh, réinitialisable.
 - **Réactivité** : abonnement + hook `useDemoSnapshot` ; les mutations déclenchent un rendu cohérent (pas de doublons état/stockage).
 - **Auth** : NextAuth JWT, comptes fixtures, `getSessionUser` sans DB. Les layouts passent l’utilisateur au shell client ; les noms/profils édités sont superposés depuis le repository.
-- **QR** : payload déterministe `sehhati://patient/SH-XXXXXX` + saisie manuelle. Résolution par `getPatientByQrCode`. Mention explicite : QR de démonstration, pas une authentification ni un consentement réel.
+- **QR** : payload déterministe `Sahty://patient/SH-XXXXXX` + saisie manuelle. Résolution par `getPatientByQrCode`. Mention explicite : QR de démonstration, pas une authentification ni un consentement réel.
 - **Parcours médecin unique** :
   1. `/doctor` → CTA « Nouvelle consultation »
   2. `/doctor/consultations/new` → scan QR ou code patient
