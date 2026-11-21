@@ -1,71 +1,43 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { Bell, Check, CheckCheck, Inbox } from 'lucide-react';
-import { toast } from 'sonner';
-import { apiFetch } from '@/lib/client';
 import { cn, formatDate } from '@/lib/utils';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Button } from '@/components/ui/button';
+import { useDemoSnapshot } from '@/lib/demo/use-demo';
+import {
+  markAllNotificationsRead,
+  markNotificationRead,
+} from '@/lib/demo/repository';
+import type { DemoNotification } from '@/lib/demo/types';
 
-type NotificationItem = {
-  id: string;
-  title: string;
-  body: string;
-  href: string | null;
-  readAt: string | null;
-  createdAt: string;
-};
-
-export function NotificationsList({
-  items: initialItems,
-  initialUnread,
-}: {
-  items: NotificationItem[];
-  initialUnread: number;
-}) {
+export function NotificationsList({ userId }: { userId: string }) {
   const t = useTranslations('notifications');
   const tc = useTranslations('common');
   const locale = useLocale();
   const router = useRouter();
-  const [items, setItems] = useState(initialItems);
-  const [unread, setUnread] = useState(initialUnread);
-  const [pending, setPending] = useState(false);
+  const db = useDemoSnapshot();
 
-  async function markAll() {
-    setPending(true);
-    setItems((prev) => prev.map((item) => ({ ...item, readAt: item.readAt ?? new Date().toISOString() })));
-    setUnread(0);
-    try {
-      await apiFetch('/api/notifications/read-all', { method: 'PATCH' });
-      router.refresh();
-    } catch {
-      toast.error(tc('networkError'));
-    } finally {
-      setPending(false);
-    }
-  }
+  const items = useMemo(
+    () =>
+      db.notifications
+        .filter((notification) => notification.userId === userId)
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        .slice(0, 50),
+    [db, userId],
+  );
+  const unread = useMemo(
+    () => items.filter((item) => !item.readAt).length,
+    [items],
+  );
 
-  async function open(item: NotificationItem) {
-    if (!item.readAt) {
-      setItems((prev) =>
-        prev.map((entry) =>
-          entry.id === item.id ? { ...entry, readAt: new Date().toISOString() } : entry,
-        ),
-      );
-      setUnread((prev) => Math.max(0, prev - 1));
-      try {
-        await apiFetch(`/api/notifications/${item.id}/read`, { method: 'PATCH' });
-      } catch {
-        // la navigation reste possible
-      }
-    }
+  function open(item: DemoNotification) {
+    if (!item.readAt) markNotificationRead(userId, item.id);
     if (item.href) {
       router.push(item.href.startsWith('/') ? `/${locale}${item.href}` : item.href);
-    } else {
-      router.refresh();
     }
   }
 
@@ -88,8 +60,8 @@ export function NotificationsList({
           type="button"
           variant="soft"
           size="sm"
-          onClick={markAll}
-          disabled={pending || unread === 0}
+          onClick={() => markAllNotificationsRead(userId)}
+          disabled={unread === 0}
         >
           <CheckCheck className="h-3.5 w-3.5" />
           {t('markAll')}

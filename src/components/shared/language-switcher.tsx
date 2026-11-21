@@ -12,6 +12,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { locales, type AppLocale } from '@/i18n/config';
+import { useDemoUserId } from '@/components/shared/demo-session';
+import { updateUserProfile } from '@/lib/demo/repository';
 
 const LABELS: Record<AppLocale, string> = { ar: 'العربية', fr: 'Français' };
 
@@ -25,6 +27,7 @@ export function LanguageSwitcher({
   const locale = useLocale() as AppLocale;
   const pathname = usePathname();
   const router = useRouter();
+  const userId = useDemoUserId();
   const [pending, startTransition] = useTransition();
 
   function change(next: AppLocale) {
@@ -33,13 +36,9 @@ export function LanguageSwitcher({
     segments[1] = next;
     const target = segments.join('/') || `/${next}`;
     document.cookie = `NEXT_LOCALE=${next}; path=/; max-age=31536000; samesite=lax`;
+    if (userId) updateUserProfile(userId, { locale: next });
     startTransition(() => router.push(target));
     router.refresh();
-    fetch('/api/me', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ locale: next }),
-    }).catch(() => {});
   }
 
   const light = variant === 'light';

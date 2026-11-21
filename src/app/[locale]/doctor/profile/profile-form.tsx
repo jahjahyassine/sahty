@@ -1,37 +1,39 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Loader2, Save } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input, Label } from '@/components/ui/input';
-import { apiFetch, errorCode } from '@/lib/client';
+import {
+  DemoRepositoryError,
+  updateDoctorProfile,
+  updateUserProfile,
+} from '@/lib/demo/repository';
+import { useDemoSessionUser } from '@/lib/demo/use-demo';
 
-export function DoctorProfileForm({
-  initial,
-}: {
-  initial: {
-    fullName: string;
-    phone: string;
-    specialty: string;
-    licenseNumber: string;
-    clinicName: string;
-    city: string;
-  };
-}) {
+export function DoctorProfileForm({ userId, doctorId }: { userId: string; doctorId: string }) {
   const t = useTranslations('doctor.profile');
   const te = useTranslations('errors');
-  const router = useRouter();
-  const [form, setForm] = useState(initial);
+  const { user, doctor: sessionDoctor } = useDemoSessionUser(userId);
+  const activeDoctorId = doctorId || sessionDoctor?.id || '';
+
+  const [form, setForm] = useState(() => ({
+    fullName: user?.fullName ?? '',
+    phone: user?.phone ?? '',
+    specialty: sessionDoctor?.specialty ?? '',
+    licenseNumber: sessionDoctor?.licenseNumber ?? '',
+    clinicName: sessionDoctor?.clinicName ?? '',
+    city: sessionDoctor?.city ?? '',
+  }));
   const [saving, setSaving] = useState(false);
 
   function update(key: keyof typeof form, value: string) {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
-  async function submit(event: React.FormEvent) {
+  function submit(event: React.FormEvent) {
     event.preventDefault();
     if (!form.fullName.trim() || !form.specialty.trim()) {
       toast.error(t('required'));
@@ -39,21 +41,23 @@ export function DoctorProfileForm({
     }
     setSaving(true);
     try {
-      await apiFetch('/api/me', {
-        method: 'PATCH',
-        json: {
-          fullName: form.fullName.trim(),
-          phone: form.phone.trim() || null,
-          specialty: form.specialty.trim(),
-          licenseNumber: form.licenseNumber.trim() || null,
-          clinicName: form.clinicName.trim() || null,
-          city: form.city.trim() || null,
-        },
+      updateUserProfile(userId, {
+        fullName: form.fullName.trim(),
+        phone: form.phone.trim() || null,
+      });
+      updateDoctorProfile(activeDoctorId, {
+        specialty: form.specialty.trim(),
+        licenseNumber: form.licenseNumber.trim() || null,
+        clinicName: form.clinicName.trim() || null,
+        city: form.city.trim() || null,
       });
       toast.success(t('saved'));
-      router.refresh();
     } catch (error) {
-      toast.error(te(errorCode(error) as 'GENERIC') ?? te('GENERIC'));
+      if (error instanceof DemoRepositoryError) {
+        toast.error(te(error.code));
+      } else {
+        toast.error(te('GENERIC'));
+      }
     } finally {
       setSaving(false);
     }

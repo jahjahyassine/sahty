@@ -7,7 +7,7 @@ import { NotificationsMenu } from '@/components/shared/notifications-menu';
 import { UserMenu } from '@/components/shared/user-menu';
 import { SearchPill } from '@/components/ui/search-pill';
 import type { ShellUser } from '@/components/shared/sidebar';
-import type { Role } from '@prisma/client';
+import type { Role } from '@/lib/demo/types';
 
 export function Topbar({
   user,
@@ -39,7 +39,7 @@ export function Topbar({
         <div className="hidden sm:block">
           <LanguageSwitcher />
         </div>
-        <NotificationsMenu initialUnread={unreadCount} />
+        <NotificationsMenu userId={user.id} initialUnread={unreadCount} />
         <UserMenu user={user} />
       </div>
     </header>

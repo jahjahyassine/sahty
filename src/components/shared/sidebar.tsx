@@ -19,9 +19,10 @@ import {
 import { Logo } from '@/components/shared/logo';
 import { Avatar } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
-import type { Role } from '@prisma/client';
+import type { Role } from '@/lib/demo/types';
 
 export type ShellUser = {
+  id: string;
   fullName: string;
   email: string;
   role: Role;

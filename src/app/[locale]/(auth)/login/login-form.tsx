@@ -14,11 +14,11 @@ import {
   Eye,
   EyeOff,
   HeartPulse,
+  Info,
   Loader2,
   LockKeyhole,
   Mail,
   QrCode,
-  ShieldCheck,
   Sparkles,
   Stethoscope,
   UserRound,
@@ -83,12 +83,31 @@ export function LoginForm() {
     }
   }
 
-  function fillDemo(kind: 'patient' | 'doctor') {
-    setValue('email', kind === 'patient' ? DEMO_ACCOUNTS.patient : DEMO_ACCOUNTS.doctor, {
-      shouldValidate: true,
-    });
+  function fillAccount(email: string) {
+    setValue('email', email, { shouldValidate: true });
     setValue('password', DEMO_ACCOUNTS.password, { shouldValidate: true });
   }
+
+  function fillDemo(kind: 'patient' | 'doctor') {
+    fillAccount(kind === 'patient' ? DEMO_ACCOUNTS.patient : DEMO_ACCOUNTS.doctor);
+  }
+
+  const demoLogins = [
+    { email: DEMO_ACCOUNTS.doctor, role: 'doctor' as const, icon: Stethoscope, fill: () => fillDemo('doctor') },
+    {
+      email: 'dr.benani@demo.ma',
+      role: 'doctor' as const,
+      icon: Stethoscope,
+      fill: () => fillAccount('dr.benani@demo.ma'),
+    },
+    { email: DEMO_ACCOUNTS.patient, role: 'patient' as const, icon: UserRound, fill: () => fillDemo('patient') },
+    {
+      email: 'salma@demo.ma',
+      role: 'patient' as const,
+      icon: UserRound,
+      fill: () => fillAccount('salma@demo.ma'),
+    },
+  ];
 
   return (
     <div className="grid overflow-hidden rounded-[36px] bg-white shadow-card ring-1 ring-white/60 lg:grid-cols-[1.02fr_1fr]">
@@ -114,7 +133,7 @@ export function LoginForm() {
         <div className="relative mt-8 space-y-3">
           {[
             { icon: QrCode, text: locale === 'ar' ? 'ربط الاستشارة بمسح رمز QR' : 'Liez une consultation en scannant un QR' },
-            { icon: ShieldCheck, text: locale === 'ar' ? 'رموز مؤقتة لمرة واحدة' : 'Des jetons temporaires à usage unique' },
+            { icon: Info, text: locale === 'ar' ? 'مساحة تجريبية بدون بيانات حقيقية' : 'Espace de démonstration, sans données réelles' },
             { icon: HeartPulse, text: locale === 'ar' ? 'تاريخك الطبي في مكان واحد' : 'Votre historique médical au même endroit' },
           ].map((item) => (
             <div key={item.text} className="flex items-center gap-3 text-xs font-medium text-white/85">
@@ -162,7 +181,15 @@ export function LoginForm() {
           <h2 className="mt-2 text-[28px] font-bold tracking-tight">{t('welcomeBack')}</h2>
           <p className="mt-2 text-sm text-ink-500">{t('loginSubtitle')}</p>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="mt-7 space-y-4" noValidate>
+          <div className="mt-5 rounded-2xl bg-primary-50/70 p-3.5 ring-1 ring-primary-100/60">
+            <p className="flex items-center gap-2 text-[11px] font-bold text-primary-800">
+              <Info className="h-3.5 w-3.5 shrink-0 text-primary-500" />
+              {t('demoOnlyTitle')}
+            </p>
+            <p className="mt-1.5 text-[10px] leading-relaxed text-ink-500">{t('demoOnlyBody')}</p>
+          </div>
+
+          <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4" noValidate>
             <div>
               <Label htmlFor="email">{t('email')}</Label>
               <div className="relative">
@@ -218,35 +245,40 @@ export function LoginForm() {
             </Button>
           </form>
 
-          <div className="mt-6 rounded-2xl bg-primary-50/70 p-3.5 ring-1 ring-primary-100/60">
-            <p className="mb-2.5 text-[11px] font-semibold text-ink-500">{t('demoTitle')}</p>
+          <div className="mt-6 rounded-2xl bg-white p-3.5 shadow-soft ring-1 ring-line">
+            <p className="mb-2.5 flex items-center gap-2 text-[11px] font-semibold text-ink-500">
+              <Sparkles className="h-3.5 w-3.5 text-accent-500" />
+              {t('demoAccounts')}
+            </p>
             <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => fillDemo('patient')}
-                className="flex items-center gap-2 rounded-xl bg-white px-2.5 py-2 text-start text-[11px] font-semibold text-ink-700 ring-1 ring-line transition-colors hover:bg-primary-50"
-              >
-                <span className="grid h-7 w-7 place-items-center rounded-lg bg-primary-100 text-primary-600">
-                  <UserRound className="h-3.5 w-3.5" />
-                </span>
-                <span className="min-w-0">
-                  <span className="block">{t('demoPatient')}</span>
-                  <span className="block truncate text-[9px] font-normal text-ink-400">ahmed@demo.ma</span>
-                </span>
-              </button>
-              <button
-                type="button"
-                onClick={() => fillDemo('doctor')}
-                className="flex items-center gap-2 rounded-xl bg-white px-2.5 py-2 text-start text-[11px] font-semibold text-ink-700 ring-1 ring-line transition-colors hover:bg-primary-50"
-              >
-                <span className="grid h-7 w-7 place-items-center rounded-lg bg-accent-100 text-accent-500">
-                  <Stethoscope className="h-3.5 w-3.5" />
-                </span>
-                <span className="min-w-0">
-                  <span className="block">{t('demoDoctor')}</span>
-                  <span className="block truncate text-[9px] font-normal text-ink-400">dr.alami@demo.ma</span>
-                </span>
-              </button>
+              {demoLogins.map((account) => (
+                <button
+                  key={account.email}
+                  type="button"
+                  onClick={account.fill}
+                  title={account.email}
+                  className="flex items-center gap-2 rounded-xl bg-primary-50/40 px-2.5 py-2 text-start ring-1 ring-line transition-colors hover:bg-primary-50"
+                >
+                  <span
+                    className={cn(
+                      'grid h-7 w-7 shrink-0 place-items-center rounded-lg',
+                      account.role === 'doctor'
+                        ? 'bg-accent-100 text-accent-500'
+                        : 'bg-primary-100 text-primary-600',
+                    )}
+                  >
+                    <account.icon className="h-3.5 w-3.5" />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-[11px] font-semibold text-ink-700">
+                      {account.role === 'doctor' ? t('demoDoctor') : t('demoPatient')}
+                    </span>
+                    <span className="block truncate text-[9px] font-normal text-ink-400" dir="ltr">
+                      {account.email}
+                    </span>
+                  </span>
+                </button>
+              ))}
             </div>
             <p className="mt-2 text-[9px] text-ink-400">{t('demoHint')}</p>
           </div>

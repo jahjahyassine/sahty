@@ -1,23 +1,19 @@
 import { cache } from 'react';
 import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth';
-import { prisma } from '@/lib/prisma';
+import { findDemoAuthUserById } from '@/lib/demo/auth';
 
+/**
+ * Session serveur : utilisateur statique de démonstration.
+ * Les données métier (consultations, notifications, profil) vivent dans le
+ * repository navigateur ; les layouts ne transmettent que l'identité.
+ */
 export const getSessionUser = cache(async () => {
   const session = await auth();
   if (!session?.user?.id) redirect('/login');
 
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    include: { patient: true, doctor: true },
-  });
-  // Session périmée (utilisateur supprimé, base réinitialisée…) : jamais de crash,
-  // on renvoie vers la connexion plutôt qu'une boucle de redirections.
+  const user = findDemoAuthUserById(session.user.id);
   if (!user) redirect('/login');
 
-  const unread = await prisma.notification.count({
-    where: { userId: user.id, readAt: null },
-  });
-
-  return { user, unread };
+  return { user, unread: 0 };
 });

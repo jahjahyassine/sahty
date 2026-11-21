@@ -1,13 +1,9 @@
-import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
-import { PageHeader } from '@/components/shared/page-header';
+import { redirect } from 'next/navigation';
+import { unstable_setRequestLocale } from 'next-intl/server';
+import { getSessionUser } from '@/lib/session';
 import { DossierView } from './dossier-view';
 
 export const dynamic = 'force-dynamic';
-
-export async function generateMetadata({ params: { locale } }: { params: { locale: string } }) {
-  const t = await getTranslations({ locale, namespace: 'doctor.dossier' });
-  return { title: t('title') };
-}
 
 export default async function DossierPatientPage({
   params: { locale, patientId },
@@ -15,16 +11,14 @@ export default async function DossierPatientPage({
   params: { locale: string; patientId: string };
 }) {
   unstable_setRequestLocale(locale);
-  const t = await getTranslations({ locale, namespace: 'doctor.dossier' });
+  const session = await getSessionUser();
+  if (session.user.role !== 'DOCTOR') redirect(`/${locale}/patient`);
 
   return (
-    <div className="animate-fade-up">
-      <PageHeader
-        eyebrow={t('title')}
-        title={t('title')}
-        subtitle={t('readOnly')}
-      />
-      <DossierView patientId={patientId} />
-    </div>
+    <DossierView
+      userId={session.user.id}
+      doctorId={session.user.doctor?.id ?? ''}
+      patientId={patientId}
+    />
   );
 }

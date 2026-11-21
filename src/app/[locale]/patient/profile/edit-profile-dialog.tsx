@@ -1,8 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
 import { Loader2, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 import {
@@ -16,46 +15,47 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input, Label } from '@/components/ui/input';
-import { apiFetch, errorCode } from '@/lib/client';
+import { DemoRepositoryError, updateUserProfile } from '@/lib/demo/repository';
+import { useDemoSessionUser } from '@/lib/demo/use-demo';
 
-export function EditProfileDialog({
-  initialName,
-  initialPhone,
-  email,
-}: {
-  initialName: string;
-  initialPhone: string | null;
-  email: string;
-}) {
+export function EditProfileDialog({ userId }: { userId: string }) {
   const t = useTranslations('patient.profile');
   const tc = useTranslations('common');
-  const te = useTranslations('errors');
-  const router = useRouter();
+  const { user } = useDemoSessionUser(userId);
   const [open, setOpen] = useState(false);
-  const [fullName, setFullName] = useState(initialName);
-  const [phone, setPhone] = useState(initialPhone ?? '');
+  const [fullName, setFullName] = useState(user?.fullName ?? '');
+  const [phone, setPhone] = useState(user?.phone ?? '');
   const [pending, setPending] = useState(false);
 
-  async function save() {
+  // Synchronise le formulaire quand le dépôt.navigateur change (après sauvegarde).
+  useEffect(() => {
+    if (!user) return;
+    setFullName(user.fullName);
+    setPhone(user.phone ?? '');
+  }, [user?.fullName, user?.phone]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  function save() {
     if (fullName.trim().length < 3) {
       toast.error(tc('required'));
       return;
     }
     setPending(true);
     try {
-      await apiFetch('/api/me', {
-        method: 'PATCH',
-        json: { fullName: fullName.trim(), phone: phone.trim() || null },
+      updateUserProfile(userId, {
+        fullName: fullName.trim(),
+        phone: phone.trim() || null,
       });
       toast.success(tc('saved'));
       setOpen(false);
-      router.refresh();
     } catch (error) {
-      toast.error(te(errorCode(error) as 'GENERIC') ?? tc('error'));
+      const message = error instanceof DemoRepositoryError ? error.message : tc('error');
+      toast.error(message || tc('error'));
     } finally {
       setPending(false);
     }
   }
+
+  if (!user) return null;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -85,7 +85,7 @@ export function EditProfileDialog({
           </div>
           <div>
             <Label htmlFor="edit-email">{t('email')}</Label>
-            <Input id="edit-email" value={email} disabled />
+            <Input id="edit-email" value={user.email} disabled />
           </div>
         </div>
 

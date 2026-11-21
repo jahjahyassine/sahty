@@ -1,13 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
 import { HeartPulse, Loader2, Plus, Save, ShieldCheck, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/input';
-import { apiFetch, errorCode } from '@/lib/client';
+import { DemoRepositoryError, updatePatientMedicalInfo } from '@/lib/demo/repository';
+import { useDemoSnapshot } from '@/lib/demo/use-demo';
 import { BLOOD_TYPES } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 
@@ -88,40 +88,36 @@ function ChipInput({
   );
 }
 
-export function MedicalInfoForm({
-  initial,
-}: {
-  initial: {
-    bloodType: string | null;
-    allergies: string[];
-    chronicDiseases: string[];
-  };
-}) {
+export function MedicalInfoForm({ patientId }: { patientId: string }) {
   const t = useTranslations('patient.profile');
   const tc = useTranslations('common');
-  const te = useTranslations('errors');
-  const router = useRouter();
+  const db = useDemoSnapshot();
+  const patient = db.patients.find((item) => item.id === patientId) ?? null;
 
-  const [bloodType, setBloodType] = useState(initial.bloodType ?? '');
-  const [allergies, setAllergies] = useState<string[]>(initial.allergies);
-  const [diseases, setDiseases] = useState<string[]>(initial.chronicDiseases);
+  const [bloodType, setBloodType] = useState(patient?.bloodType ?? '');
+  const [allergies, setAllergies] = useState<string[]>(patient?.allergies ?? []);
+  const [diseases, setDiseases] = useState<string[]>(patient?.chronicDiseases ?? []);
   const [pending, setPending] = useState(false);
 
-  async function save() {
+  useEffect(() => {
+    if (!patient) return;
+    setBloodType(patient.bloodType ?? '');
+    setAllergies(patient.allergies);
+    setDiseases(patient.chronicDiseases);
+  }, [patient]);
+
+  function save() {
     setPending(true);
     try {
-      await apiFetch('/api/patient/medical-info', {
-        method: 'PATCH',
-        json: {
-          bloodType,
-          allergies,
-          chronicDiseases: diseases,
-        },
+      updatePatientMedicalInfo(patientId, {
+        bloodType: bloodType || null,
+        allergies,
+        chronicDiseases: diseases,
       });
       toast.success(t('saved'));
-      router.refresh();
     } catch (error) {
-      toast.error(te(errorCode(error) as 'GENERIC') ?? tc('error'));
+      const message = error instanceof DemoRepositoryError ? error.message : tc('error');
+      toast.error(message || tc('error'));
     } finally {
       setPending(false);
     }
@@ -141,7 +137,7 @@ export function MedicalInfoForm({
             </p>
           </div>
         </div>
-        <Button variant="primary" size="md" onClick={save} disabled={pending}>
+        <Button variant="primary" size="md" onClick={save} disabled={pending || !patient}>
           {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
           {t('saveMedical')}
         </Button>

@@ -1,6 +1,7 @@
-import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
-import { PageHeader } from '@/components/shared/page-header';
-import { ConsultationForm } from '@/components/doctor/consultation-form';
+import { redirect } from 'next/navigation';
+import { unstable_setRequestLocale } from 'next-intl/server';
+import { getSessionUser } from '@/lib/session';
+import { NewConsultationView } from './new-consultation-view';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,15 +15,15 @@ export default async function NewConsultationPage({
   searchParams,
 }: Props) {
   unstable_setRequestLocale(locale);
-  const t = await getTranslations({ locale, namespace: 'doctor.form' });
-  const patientId = searchParams?.patientId?.trim() ?? '';
-  const patientName = searchParams?.patientName?.trim() ?? '';
-  const pendingPatient = patientId ? { patientId, patientName } : null;
+  const session = await getSessionUser();
+  if (session.user.role !== 'DOCTOR') redirect(`/${locale}/patient`);
 
   return (
-    <div className="animate-fade-up">
-      <PageHeader title={t('newTitle')} subtitle={t('newSubtitle')} />
-      <ConsultationForm pendingPatient={pendingPatient} />
-    </div>
+    <NewConsultationView
+      userId={session.user.id}
+      doctorId={session.user.doctor?.id ?? ''}
+      patientId={searchParams?.patientId?.trim() ?? ''}
+      patientName={searchParams?.patientName?.trim() ?? ''}
+    />
   );
 }

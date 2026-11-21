@@ -5,29 +5,19 @@
   "description": "صحتي — Sehhati. Votre santé, dans votre poche.",
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db:push": "prisma db push",
-    "db:migrate": "prisma migrate dev",
-    "db:deploy": "prisma migrate deploy",
-    "db:seed": "prisma db seed",
-    "db:studio": "prisma studio",
     "test": "vitest run"
-  },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "3.9.1",
-    "@prisma/client": "5.22.0",
     "@radix-ui/react-dialog": "1.1.4",
     "@radix-ui/react-dropdown-menu": "2.1.4",
     "@radix-ui/react-label": "2.1.1",
     "@radix-ui/react-slot": "1.1.1",
     "@tanstack/react-query": "5.62.7",
     "@yudiel/react-qr-scanner": "2.6.0",
-    "bcryptjs": "2.4.3",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "lucide-react": "0.468.0",
@@ -44,7 +34,6 @@
     "zod": "3.24.1"
   },
   "devDependencies": {
-    "@types/bcryptjs": "2.4.6",
     "@types/node": "22.10.2",
     "@types/react": "18.3.18",
     "@types/react-dom": "18.3.5",
@@ -52,7 +41,6 @@
     "eslint": "^8.57.1",
     "eslint-config-next": "^14.2.35",
     "postcss": "8.4.49",
-    "prisma": "5.22.0",
     "tailwindcss": "3.4.17",
     "tsx": "4.19.2",
     "typescript": "5.7.2",

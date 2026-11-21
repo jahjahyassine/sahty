@@ -12,7 +12,7 @@ import {
   UserRound,
   Plus,
 } from 'lucide-react';
-import type { Role } from '@prisma/client';
+import type { Role } from '@/lib/demo/types';
 import { cn } from '@/lib/utils';
 
 export function BottomNav({ role }: { role: Role }) {

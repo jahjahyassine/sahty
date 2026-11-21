@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { defaultLocale, isAppLocale } from '@/i18n/config';
+import { DEMO_AUTH_SECRET } from '@/lib/demo/config';
 
 const PUBLIC_PATHS = ['/login', '/register'];
 
@@ -23,7 +24,7 @@ export async function middleware(request: NextRequest) {
 
   const locale = maybeLocale;
   const path = `/${segments.slice(1).join('/')}`;
-  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+  const token = await getToken({ req: request, secret: DEMO_AUTH_SECRET });
   const role = token?.role as string | undefined;
 
   // Racine de la locale → tableau de bord ou connexion

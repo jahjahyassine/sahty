@@ -1,38 +1,13 @@
 services:
-  db:
-    image: postgres:17-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: sehhati
-      POSTGRES_USER: sehhati
-      POSTGRES_PASSWORD: sehhati
-    ports:
-      - '5433:5432'
-    volumes:
-      - sehhati_pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U sehhati -d sehhati']
-      interval: 5s
-      timeout: 5s
-      retries: 10
-
   app:
     build: .
     restart: unless-stopped
-    depends_on:
-      db:
-        condition: service_healthy
     environment:
-      DATABASE_URL: postgresql://sehhati:sehhati@db:5432/sehhati?schema=public
       NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-change-me-with-openssl-rand-base64-32}
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+      # Optionnel : fournisseur IA côté serveur (sinon rapport local dans le navigateur)
+      # NEXT_PUBLIC_DEMO_AI_SERVER: ${NEXT_PUBLIC_DEMO_AI_SERVER:-false}
+      # AI_API_KEY: ${AI_API_KEY:-}
     ports:
       - '3000:3000'
-    volumes:
-      - sehhati_uploads:/app/uploads
-    command: sh -c "npx prisma migrate deploy && npm run start"
-
-volumes:
-  sehhati_pgdata:
-  sehhati_uploads:

@@ -2,9 +2,13 @@
 
 import Link from 'next/link';
 import { signOut } from 'next-auth/react';
+import { useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
-import { ChevronDown, LogOut, UserRound, QrCode, Stethoscope } from 'lucide-react';
-import type { Role } from '@prisma/client';
+import { toast } from 'sonner';
+import { ChevronDown, LogOut, UserRound, QrCode, RotateCcw, Stethoscope } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { resetDemoData } from '@/lib/demo/repository';
+import type { Role } from '@/lib/demo/types';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,6 +25,7 @@ export function UserMenu({ user }: { user: ShellUser }) {
   const locale = useLocale();
   const t = useTranslations('common');
   const isPatient = user.role === 'PATIENT';
+  const [confirmReset, setConfirmReset] = useState(false);
 
   return (
     <DropdownMenu>
@@ -71,6 +76,47 @@ export function UserMenu({ user }: { user: ShellUser }) {
           <span className="text-xs text-ink-400">{t('language')}</span>
           <LanguageSwitcher />
         </div>
+        <DropdownMenuSeparator />
+        {confirmReset ? (
+          <div className="px-2 py-2">
+            <p className="text-xs font-bold text-ink-900">{t('resetDemoTitle')}</p>
+            <p className="mt-1 text-[10px] leading-relaxed text-ink-500">
+              {t('resetDemoBody')}
+            </p>
+            <div className="mt-3 flex gap-2">
+              <Button
+                type="button"
+                size="sm"
+                variant="danger"
+                onClick={() => {
+                  resetDemoData();
+                  setConfirmReset(false);
+                  toast.success(t('resetDemoDone'));
+                }}
+              >
+                {t('confirm')}
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                onClick={() => setConfirmReset(false)}
+              >
+                {t('cancel')}
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <DropdownMenuItem
+            onSelect={(event) => {
+              event.preventDefault();
+              setConfirmReset(true);
+            }}
+          >
+            <RotateCcw className="h-4 w-4" />
+            {t('resetDemo')}
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="text-danger focus:bg-[#FDECEC] focus:text-danger"

@@ -17,14 +17,15 @@ export default async function PatientLayout({
 
   return (
     <AppShell
-      user={{
+      sessionUser={{
+        id: data.user.id,
         fullName: data.user.fullName,
         email: data.user.email,
         role: data.user.role,
-        patientCode: data.user.patient?.patientCode,
+        patientId: data.user.patient?.id ?? null,
+        doctorId: data.user.doctor?.id ?? null,
         avatarUrl: data.user.avatarUrl,
       }}
-      unreadCount={data.unread}
     >
       {children}
     </AppShell>

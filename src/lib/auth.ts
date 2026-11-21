@@ -1,9 +1,16 @@
-import bcrypt from 'bcryptjs';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { getServerSession, type NextAuthOptions } from 'next-auth';
-import type { Role } from '@prisma/client';
-import { prisma } from '@/lib/prisma';
+import type { Role } from '@/lib/demo/types';
+import { verifyDemoCredentials } from '@/lib/demo/auth';
+import { DEMO_AUTH_SECRET } from '@/lib/demo/config';
 
+/**
+ * Authentification de démonstration.
+ *
+ * Les comptes proviennent de `src/lib/demo/fixtures.ts` et le mot de passe est
+ * volontairement public (`Demo1234!`). Aucune base de données, aucun bcrypt.
+ * La session reste un JWT NextAuth pour conserver les guards existants.
+ */
 export const authOptions: NextAuthOptions = {
   session: {
     strategy: 'jwt',
@@ -21,24 +28,8 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
-        const email = credentials.email.trim().toLowerCase();
-        const user = await prisma.user.findUnique({
-          where: { email },
-          include: { patient: true, doctor: true },
-        });
+        const user = verifyDemoCredentials(credentials.email, credentials.password);
         if (!user) return null;
-        const valid = await bcrypt.compare(credentials.password, user.passwordHash);
-        if (!valid) return null;
-
-        await prisma.auditLog.create({
-          data: {
-            userId: user.id,
-            action: 'LOGIN',
-            entityType: 'User',
-            entityId: user.id,
-          },
-        });
-
         return {
           id: user.id,
           email: user.email,
@@ -72,7 +63,7 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: DEMO_AUTH_SECRET,
 };
 
 export function auth() {
